@@ -48,6 +48,7 @@ class NewQuery(Resource):
 		for p in para_list:
 			parser.add_argument(p)
 		args = parser.parse_args()
+		print(args['user_name'])
 		query_time = datetime.strptime(args['time'], '%Y-%m-%d %H:%M:%S')
 		state, ap = learning.answer_query_new(query_time, args['user_name'], args['table_name'], fast=True)
 		if state == 1:

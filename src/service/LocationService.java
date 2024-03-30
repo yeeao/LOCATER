@@ -21,6 +21,9 @@ import java.util.regex.Pattern;
 
 public class LocationService {
 
+    // Added
+    static Set<String> tbl_set = new HashSet<>();
+
     static public void main(String[] args) {
 //        LocationState result = queryTimestamp("Roberto Yus", "2018-06-05 13:00:00", 1200,
 //                1, 1, 0.8f, 120, 2);
@@ -546,12 +549,21 @@ public class LocationService {
     }
 
     static boolean checkLocalTableExist(String tableName) {
+
+        // Added
+        if(tbl_set.contains(tableName)) {
+            return true;
+        }
+
         try (Connect connect = new Connect("true-local")) {
             Statement statement = connect.getConnection().createStatement();
             statement.execute(String.format("select 1 from %s limit 1;", tableName));
         } catch (SQLException e) {
             return false;
         }
+
+        // Added
+        tbl_set.add(tableName);
         return true;
     }
 
@@ -583,6 +595,10 @@ public class LocationService {
                         .format("Query failed (return null), since local data cannot be generated for %s", hashedMac));
                 return null;
             }
+
+            // Added
+            // save table_name in set
+            tbl_set.add(tableName);
         }
         long t2 = System.currentTimeMillis();
         //System.out.println(String.format("Check table time: %d ms", t2 - t1));

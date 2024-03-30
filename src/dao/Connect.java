@@ -14,7 +14,8 @@ public class Connect implements AutoCloseable {
 
     public Connect(String type) {
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
+//            Class.forName("com.mysql.cj.jdbc.Driver");
+            Class.forName("org.postgresql.Driver");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -28,9 +29,16 @@ public class Connect implements AutoCloseable {
                 e.printStackTrace();
             }
             if (type.equals("server")) {
+
+//                connection = DriverManager.getConnection(
+//                        "jdbc:mysql://sensoria-mysql.ics.uci.edu:3306/tippersdb_restored?useSSL=false&serverTimezone=PST",
+//                        user, pwd);
+//                connection = DriverManager.getConnection(
+//                        "jdbc:mysql://localhost:3306/tippersdb_restored?useSSL=false&serverTimezone=PST",
+//                        user, pwd);
                 connection = DriverManager.getConnection(
-                        "jdbc:mysql://sensoria-mysql.ics.uci.edu:3306/tippersdb_restored?useSSL=false&serverTimezone=PST",
-                        user, pwd);
+                        "jdbc:postgresql://localhost:5432/tippersdb_restored?serverTimezone=PST", user,
+                        pwd);
             }
             if (type.equals("local")) {
                 connection = DriverManager.getConnection(
@@ -39,11 +47,21 @@ public class Connect implements AutoCloseable {
             }
             if (type.equals("true-local")) {
                 // Put the user and password of your local mysql database here
-                String localUser = "root";
-                String localPassword = "517517";
+//                String localUser = "root";
+//                String localPassword = "517517";
+//                connection = DriverManager.getConnection(
+//                        "jdbc:mysql://localhost:3306/localization?useSSL=false&rewriteBatchedStatements=true&allowPublicKeyRetrieval=true" +
+//                                "&serverTimezone=PST", localUser, localPassword);
+                String localUser = "kotik";
+//                String localPassword = "jk92908585P";
+                String localPassword = "jk9290";
+//                connection = DriverManager.getConnection(
+//                        "jdbc:mysql://localhost:3306/localization?useSSL=false&rewriteBatchedStatements=true&allowPublicKeyRetrieval=true" +
+//                                "&serverTimezone=PST", localUser, localPassword);
                 connection = DriverManager.getConnection(
-                        "jdbc:mysql://localhost:3306/localization?useSSL=false&rewriteBatchedStatements=true&allowPublicKeyRetrieval=true" +
-                                "&serverTimezone=PST", localUser, localPassword);
+                        "jdbc:postgresql://localhost:5432/localization?serverTimezone=PST", user,
+                        pwd);
+
             }
         } catch (SQLException e) {
             e.printStackTrace();

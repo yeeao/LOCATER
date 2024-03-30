@@ -14,12 +14,20 @@ import java.sql.Connection;
 
 import dao.LocalDataGeneration;
 
+import java.time.format.DateTimeFormatter;
+
 public class LocalizationDB {
 	public static void main(String args[]) {
 		Initialization.Initialize();
 
+		// added by Seiya
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
 		//long startTime = System.currentTimeMillis();
+		System.out.println(java.time.LocalDateTime.now().format(dtf));
 		LocationSet Location = LocationPrediction.getLocation("d5d1972a21856639df45695de00a69eb6644eb26","2018-05-01 12:34:11",14);
+//		LocationSet Location = LocationPrediction.getLocation("d5d1972a21856639df45695de00a69eb6644eb26",java.time.LocalDateTime.now().format(dtf),14);
+//		LocationSet Location = LocationPrediction.getLocation("b8076f28416d9666c60b6989da74addcd521b96a","2019-04-30 13:59:00",14);
 		//long endTime = System.currentTimeMillis();
 		//long duration = (endTime - startTime);
 

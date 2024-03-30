@@ -54,7 +54,10 @@ public class LocalDataMaintenance {
 	public static List<Space_metadata> space_metadata = new ArrayList<>();
 
 	public static String createStatementDB(String dababase) {
-		return String.format("create database IF NOT EXISTS %s;", dababase);
+		// for mysql
+//		return String.format("create database IF NOT EXISTS %s;", dababase);
+		// for postgres
+		return String.format("SELECT 'CREATE DATABASE %1$s' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '%1$s')\\gexec", dababase);
 	}
 
 	public static void loadSpaceMetadata() {
@@ -284,7 +287,9 @@ public class LocalDataMaintenance {
 		Connection localConnection = connectLocal.getConnection();
 		try {
 			Statement stmtlocal = localConnection.createStatement();
-			stmtlocal.executeUpdate(createStatementDB(database));
+//			stmtlocal.executeUpdate(createStatementDB(database));
+			// only run this if you are running the program for the first time (Seiya)
+//			stmtlocal.executeUpdate(String.format("create database %s", database));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -296,7 +301,7 @@ public class LocalDataMaintenance {
 		Connection localConnection = connectLocal.getConnection();
 		try {
 			Statement stmtlocal = localConnection.createStatement();
-			stmtlocal.executeUpdate(createstatementOfficeTable());
+//			stmtlocal.executeUpdate(createstatementOfficeTable());
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -308,7 +313,7 @@ public class LocalDataMaintenance {
 		Connection localConnection = connectLocal.getConnection();
 		try {
 			Statement stmtlocal = localConnection.createStatement();
-			stmtlocal.executeUpdate(createstatementCatcheObservationList());
+//			stmtlocal.executeUpdate(createstatementCatcheObservationList());
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -339,8 +344,10 @@ public class LocalDataMaintenance {
 		List<String> emails = new ArrayList<>();
 		try {
 			Statement stmtserver = serverConnection.createStatement();
+//			rs = stmtserver.executeQuery(
+//					String.format("select email from USER where office is not null and email is not null"));
 			rs = stmtserver.executeQuery(
-					String.format("select email from USER where office is not null and email is not null"));
+					String.format("select email from USERS where office is not null and email is not null"));
 			while (rs.next()) {
 				emails.add(rs.getString(1));
 			}
@@ -386,7 +393,7 @@ public class LocalDataMaintenance {
 		Connection localConnection = connectLocal.getConnection();
 		try {
 			Statement stmtlocal = localConnection.createStatement();
-			stmtlocal.executeUpdate(createstatementUserTable());
+//			stmtlocal.executeUpdate(createstatementUserTable());
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -721,19 +728,19 @@ public class LocalDataMaintenance {
 
 	public static String searchOffice(String mac) {
 		String office = "null";
-		Connect connectServer = new Connect("server", serverDatabase);// OBSERVATION
-		Connection serverConnection = connectServer.getConnection();
-		ResultSet rs;
-		try {
-			Statement stmtserver = serverConnection.createStatement();
-			rs = stmtserver.executeQuery(String.format("select roomID from USER_ROOM where mac = '%s'", mac));
-			while (rs.next()) {
-				office = rs.getString(1);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		connectServer.close();
+//		Connect connectServer = new Connect("server", serverDatabase);// OBSERVATION
+//		Connection serverConnection = connectServer.getConnection();
+//		ResultSet rs;
+//		try {
+//			Statement stmtserver = serverConnection.createStatement();
+//			rs = stmtserver.executeQuery(String.format("select roomID from USER_ROOM where mac = '%s'", mac));
+//			while (rs.next()) {
+//				office = rs.getString(1);
+//			}
+//		} catch (SQLException e) {
+////			e.printStackTrace();
+//		}
+//		connectServer.close();
 		return office;
 	}
 	//for testing --------------------------------------------------------------

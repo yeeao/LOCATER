@@ -3,6 +3,30 @@ import numpy as np
 from datetime import datetime, timedelta
 
 
+# def read_local_data(start_date, end_date, table, simu=False, user=''):
+# 	config = dict()
+# 	with open('log_info.txt') as f:
+# 		info = f.readlines()
+# 		# config["host"] = "sensoria-mysql.ics.uci.edu" //use log_info_server.txt
+# 		config["host"] = "localhost"
+# 		config['user'] = info[0].strip()
+# 		config['password'] = info[1].strip()
+# 		config['database'] = info[2].strip()
+# 		config['auth_plugin'] = 'mysql_native_password'
+# 	cnx = myc.connect(**config)
+# 	cursor = cnx.cursor()
+# 	if simu:
+# 		query = f'SELECT timestamp, sensor_id FROM {table} WHERE timestamp >={start_date} AND date(timestamp)<={end_date} AND user={user} ORDER BY timestamp'
+# 	else:
+# 		query = 'SELECT timestamp, sensor_id FROM %s WHERE timestamp >= %s AND date(timestamp) <= %s ORDER BY timestamp' % (
+# 			table, start_date, end_date)
+# 	cursor.execute(query)
+# 	results = cursor.fetchall()
+# 	cnx.close()
+# 	return results
+
+# NEW : using postgresql
+from sqlalchemy import create_engine
 def read_local_data(start_date, end_date, table, simu=False, user=''):
 	config = dict()
 	with open('log_info.txt') as f:
@@ -13,18 +37,30 @@ def read_local_data(start_date, end_date, table, simu=False, user=''):
 		config['password'] = info[1].strip()
 		config['database'] = info[2].strip()
 		config['auth_plugin'] = 'mysql_native_password'
-	cnx = myc.connect(**config)
-	cursor = cnx.cursor()
+	engine = create_engine(f'postgresql+psycopg2://postgres:{config["password"]}@localhost/{config["database"]}')
+	# cursor = cnx.cursor()
+	conn = engine.raw_connection()
 	if simu:
-		query = f'SELECT timestamp, sensor_id FROM {table} WHERE timestamp >={start_date} AND date(timestamp)<={end_date} AND user={user} ORDER BY timestamp'
+		# query = f'SELECT timestamp, sensor_id FROM {table} WHERE timestamp >={start_date} AND date(timestamp)<={end_date} AND user={user} ORDER BY timestamp'
+		# TO_TIMESTAMP(?, 'YYYY-MM-DD HH24:MI:SS')
+		query = f'''SELECT time_info, sensor_id FROM {table} 
+					WHERE time_info >=TO_TIMESTAMP('{start_date}', 'YYYYMMDD')
+					AND date(time_info)<=TO_TIMESTAMP('{end_date}', 'YYYYMMDD')
+					AND user={user} ORDER BY time_info'''
 	else:
-		query = 'SELECT timestamp, sensor_id FROM %s WHERE timestamp >= %s AND date(timestamp) <= %s ORDER BY timestamp' % (
+		# query = 'SELECT timestamp, sensor_id FROM %s WHERE timestamp >= %s AND date(timestamp) <= %s ORDER BY timestamp' % (
+		# 	table, start_date, end_date)
+		query = '''SELECT time_info, sensor_id FROM %s 
+					WHERE time_info >= TO_TIMESTAMP('%s', 'YYYYMMDD')
+					AND date(time_info) <= TO_TIMESTAMP('%s', 'YYYYMMDD') 
+					ORDER BY time_info''' % (
 			table, start_date, end_date)
+	cursor = conn.cursor()
 	cursor.execute(query)
 	results = cursor.fetchall()
-	cnx.close()
+	# cnx.close()
+	conn.close()
 	return results
-
 
 def get_server_connection():
 	config = dict()

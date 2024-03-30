@@ -343,7 +343,8 @@ public class LocalDataGeneration {
             // Create local table, table existence checked in advance.
             Statement st1 = localConn.createStatement();
             String tableName = getTableName(hashedMac);
-            st1.execute(String.format("create table %s (timestamp datetime, sensor_id varchar(255),mac varchar(255))", tableName));
+//            st1.execute(String.format("create table %s (timestamp datetime, sensor_id varchar(255),mac varchar(255))", tableName));
+            st1.execute(String.format("create table %s (time_info timestamp, sensor_id varchar(255),mac varchar(255))", tableName));
 
             // Populate the table
             PreparedStatement ps1 = serverConn.prepareStatement("select timeStamp, sensor_id from OBSERVATION_CLEAN " +
@@ -359,7 +360,8 @@ public class LocalDataGeneration {
 
             long tick1 = System.currentTimeMillis();
 
-            PreparedStatement ps2 = localConn.prepareStatement(String.format("insert into %s values(?,?,?)", tableName));
+//            PreparedStatement ps2 = localConn.prepareStatement(String.format("insert into %s values(?,?,?)", tableName));
+            PreparedStatement ps2 = localConn.prepareStatement(String.format("insert into %s values(TO_TIMESTAMP(?, 'YYYY-MM-DD HH24:MI:SS'),?,?)", tableName));
             while (rs1.next()) {
                 ++count;
                 ps2.setString(1, rs1.getString(1));

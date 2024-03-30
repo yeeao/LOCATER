@@ -10,13 +10,16 @@ import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.*;
 
 public class Connect implements AutoCloseable {
 	Connection connection;
 
 	public Connect(String type, String database) {
+		// Do not need forName since Java6
 		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
+//			Class.forName("com.mysql.cj.jdbc.Driver");
+			Class.forName("org.postgresql.Driver");
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -37,8 +40,15 @@ public class Connect implements AutoCloseable {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+//			connection = DriverManager.getConnection(
+//					String.format("jdbc:mysql://sensoria-mysql.ics.uci.edu:3306/%s?useSSL=false&serverTimezone=PST", database), user,
+//					pwd);
+//			connection = DriverManager.getConnection(
+//					String.format("jdbc:mysql://localhost:3306/%s?useSSL=false&serverTimezone=PST", database), user,
+//					pwd);
+
 			connection = DriverManager.getConnection(
-					String.format("jdbc:mysql://sensoria-mysql.ics.uci.edu:3306/%s?useSSL=false&serverTimezone=PST", database), user,
+					String.format("jdbc:postgresql://localhost:5432/%s", database), user,
 					pwd);
 			// }
 		} catch (SQLException e) {
